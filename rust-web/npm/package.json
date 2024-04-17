@@ -14,14 +14,14 @@
     "build:fontawesome": "cp node_modules/@fortawesome/fontawesome-free/webfonts/* ../static/webfonts && cp node_modules/@fortawesome/fontawesome-free/css/fontawesome.min.css ../static/css/ && cp node_modules/@fortawesome/fontawesome-free/css/all.min.css ../static/css/fontawesome-all.min.css",
     "build": "npm run clean && npm run download && npm run build:mkdir && npm run build:popper && npm run build:bootstrap-js && npm run build:bootstrap && npm run build:fontawesome",
     "download": "npm install",
-    "clean": "rm -Rv ./node_modules/ ../static/popper/ ../static/css/ ../static/js/ ../static/webfonts/ || true"
+    "clean": ""
   },
   "keywords": "internal",
   "author": "Anonymous",
   "license": "MIT",
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "~5.15.2",
-    "bootstrap": "~5.1.0",
-    "@popperjs/core": "~2.9.2"
+    "@fortawesome/fontawesome-free": "~6.5.2",
+    "bootstrap": "~5.3.0",
+    "@popperjs/core": "~2.11.8"
   }
 }
