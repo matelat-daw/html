@@ -105,36 +105,35 @@ include "includes/nav_index.html";
                     <h3>Lista de datos de InfluxDB:</h3>
                     <br><br>
                     <?php
-                    $query = "from(bucket: \"MACDB\") |> range(start: -2h) |> filter(fn: (r) => r._measurement == \"intruder\")";
+                    $query = "from(bucket: \"MACDB\") |> range(start: -2h) |> filter(fn: (r) => r._measurement == \"intruder\")"; // Consulta a Influx los datos, 2 horas antes.
                     $tables = $client->createQueryApi()->query($query, $org);
                     $time = [];
                     $records = [];
                     foreach ($tables as $table)
                     {
-                        // echo "<script>console.log('Estos datos');</script>";
                         foreach ($table->records as $record)
                         {
-                            $l_port = $record->getRecordValue("localPort");
+                            $l_port = $record->getRecordValue("localPort"); // Obtenemos el Puerto Local, Modifcamos la Biblioteca de InfluxDB, el script FluxRecord.php, para poder acceder al Método getRecordValue() que era private, lo hicimos public.
                             $r_port = $record->getRecordValue("remotePort");
                             $protocol = $record->getRecordValue("protocol");
                             $oui = $record->getRecordValue("oui");
-                            $tag = ["ip" => $record->getRecordValue("ip"), "mac" => $record->getRecordValue("mac"), "l_port" => $record->getRecordValue("localPort"), "r_port" => $record->getRecordValue("remotePort"), "protocol" => $record->getRecordValue("protocol"), "oui" => $record->getRecordValue("oui")];
-                            $row = key_exists($record->getTime(), $records) ? $records[$record->getTime()] : [];
-                            $records[$record->getTime()] = array_merge($row, $tag, [$record->getField() => $record->getValue()]);
+                            $tag = ["ip" => $record->getRecordValue("ip"), "mac" => $record->getRecordValue("mac"), "l_port" => $record->getRecordValue("localPort"), "r_port" => $record->getRecordValue("remotePort"), "protocol" => $record->getRecordValue("protocol"), "oui" => $record->getRecordValue("oui")]; // En la Varible de tipo array $tag, pusimos todos los tags y sus valores.
+                            $row = key_exists($record->getTime(), $records) ? $records[$record->getTime()] : []; // Este operador ternario asigna a $row el tag _time, la marca de tiempo que pone InfluxDB.
+                            $records[$record->getTime()] = array_merge($row, $tag, [$record->getField() => $record->getValue()]); // Hacemos un array_merge con los datos de toda la tupla.
                         }
                     }
 
-                    if (count($records) > 0)
+                    if (count($records) > 0) // Si hay Datos.
                     {
-                        $i = 0;
-                        foreach($records as $key) {
-                            echo "<pre>";
-                            foreach ($key as $value)
+                        foreach($records as $key) // Bucle para obtener las keys.
+                        {
+                            echo "<h4>"; // Formato del texto.
+                            foreach ($key as $value) // Bucle para obtener los valores.
                             {
-                                echo key($key) . ": " . $value . " - ";
-                                next($key);
+                                echo key($key) . ": " . $value . " - "; // Mostramos Clave, Valor.
+                                next($key); // Siguiente Clave.
                             }
-                            echo "</pre>";
+                            echo "</h4>";
                         }
                     }
                     else
