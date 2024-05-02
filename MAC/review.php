@@ -78,6 +78,8 @@ if (isset($_POST["ip"])) // Recibe la IP desde el script index.php por POST.
 
     $client->close();
 
+    echo "<script>toast(0, 'Datos Agregados', 'Se Han Agregado Datos a InfluxDB.');</script>";
+
     // echo '<fieldset>
     //         <legend>Datos de la MAC Sospechosa y su IP</legend>
     //         <form action="review.php" method="post">

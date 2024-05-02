@@ -92,20 +92,13 @@ include "includes/nav_index.html";
                     }
                 ?>
                 <!-- El div con ID table contendrá la tabla con todos los datos de los Dispositivos Sospechosos. El span con ID pages muestra el número de página, los botones Anteriores Resultados y Siguientes Resultados cambiaran a las páginas de resultados. Los resultados se muestran desde la página 1 y se paginan de a 8. -->
-                <div id="table"></div>
-                <br>
-                <span id="pages"></span>&nbsp;&nbsp;&nbsp;&nbsp;
-                <button onclick="prev()" id="prev_btn" class="btn btn-danger" style="visibility: hidden;">Anteriores Resultados</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                <button onclick="next()" id="next_btn" class="btn btn-primary" style="visibility: hidden;">Siguientes Resultados</button><br>
-                <script>change(1, 8);</script>
-                <br><br><br><br>
                 </div>
                 <div id="view3">
                     <br><br><br><br>
                     <h3>Lista de datos de InfluxDB:</h3>
                     <br><br>
                     <?php
-                    $query = "from(bucket: \"MACDB\") |> range(start: -2h) |> filter(fn: (r) => r._measurement == \"intruder\")"; // Consulta a Influx los datos, 2 horas antes.
+                    $query = "from(bucket: \"MACDB\") |> range(start: -6h) |> filter(fn: (r) => r._measurement == \"intruder\")"; // Consulta a Influx los datos, 2 horas antes.
                     $tables = $client->createQueryApi()->query($query, $org);
                     $time = [];
                     $records = [];
@@ -113,10 +106,6 @@ include "includes/nav_index.html";
                     {
                         foreach ($table->records as $record)
                         {
-                            $l_port = $record->getRecordValue("localPort"); // Obtenemos el Puerto Local, Modifcamos la Biblioteca de InfluxDB, el script FluxRecord.php, para poder acceder al Método getRecordValue() que era private, lo hicimos public.
-                            $r_port = $record->getRecordValue("remotePort");
-                            $protocol = $record->getRecordValue("protocol");
-                            $oui = $record->getRecordValue("oui");
                             $tag = ["ip" => $record->getRecordValue("ip"), "mac" => $record->getRecordValue("mac"), "l_port" => $record->getRecordValue("localPort"), "r_port" => $record->getRecordValue("remotePort"), "protocol" => $record->getRecordValue("protocol"), "oui" => $record->getRecordValue("oui")]; // En la Varible de tipo array $tag, pusimos todos los tags y sus valores.
                             $row = key_exists($record->getTime(), $records) ? $records[$record->getTime()] : []; // Este operador ternario asigna a $row el tag _time, la marca de tiempo que pone InfluxDB.
                             $records[$record->getTime()] = array_merge($row, $tag, [$record->getField() => $record->getValue()]); // Hacemos un array_merge con los datos de toda la tupla.
@@ -125,23 +114,50 @@ include "includes/nav_index.html";
 
                     if (count($records) > 0) // Si hay Datos.
                     {
+                        $i = 0;
+                        $z = 0;
+                        echo "<script>var ip = [];
+                                        var mac = [];
+                                        var l_port = [];
+                                        var r_port = [];
+                                        var protocol = [];
+                                        var oui = [];
+                                        var array_key = [];
+                                        var array_value = [];</script>";
                         foreach($records as $key) // Bucle para obtener las keys.
                         {
-                            echo "<h4>"; // Formato del texto.
+                            $z++;
+                            echo "<h5>"; // Formato del texto.
                             foreach ($key as $value) // Bucle para obtener los valores.
                             {
-                                echo key($key) . ": " . $value . " - "; // Mostramos Clave, Valor.
+                                if ($z == 1)
+                                {
+                                    echo "<script>array_key[" . $i . "] = '" . key($key) . "';</script>";
+                                }
+                                echo "<script>array_value[" . $i . "] = '" . $value . "';</script>";
                                 next($key); // Siguiente Clave.
+                                $i++;
                             }
-                            echo "</h4>";
+                            echo "</h5>";
                         }
                     }
                     else
                     {
-                        echo "<script>toat(0, 'Sin Datos Aun', 'No Hay Datos de la Última Hora.');</script>";
+                        echo "<script>toast(0, 'Sin Datos Aun', 'No Hay Datos de la Última Hora.');</script>";
+                    }
+                    for ($j = 0; $j < $i; $j++)
+                    {
+                        echo "<script>console.log('Los Datos Son: ' + array_key[" . $j . "]);</script>";
+                        echo "<script>console.log('Los Datos Son: ' + array_value[" . $j . "]);</script>";
                     }
                     ?>
-                    <br><br><br>
+                    <div id="table"></div>
+                    <br>
+                    <span id="pages"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button onclick="prev()" id="prev_btn" class="btn btn-danger" style="visibility: hidden;">Anteriores Resultados</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button onclick="next()" id="next_btn" class="btn btn-primary" style="visibility: hidden;">Siguientes Resultados</button><br>
+                    <script>change(1, 8);</script>
+                    <br><br><br><br>
                 </div>
             </div>
         <div class="col-md-1"></div>
