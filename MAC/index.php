@@ -105,36 +105,36 @@ include "includes/nav_index.html";
                     <h3>Lista de datos de InfluxDB:</h3>
                     <br><br>
                     <?php
-                    $query = "from(bucket: \"MACDB\") |> range(start: -1h) |> filter(fn: (r) => r._measurement == \"intruder\")";
+                    $query = "from(bucket: \"MACDB\") |> range(start: -2h) |> filter(fn: (r) => r._measurement == \"intruder\")";
                     $tables = $client->createQueryApi()->query($query, $org);
                     $time = [];
-                    
-                    $i = 0;
+                    $records = [];
                     foreach ($tables as $table)
                     {
+                        // echo "<script>console.log('Estos datos');</script>";
                         foreach ($table->records as $record)
                         {
-                            $time[$i] = $record->getTime();
-                            $measurement[$i] = $record->getMeasurement();
-                            $field[$i] = $record->getField();
-                            $value[$i] = $record->getValue();
-                            // $ip_tag[$i] = $record->getIp(); // Funciones Agregadas por mi. Se puede usar la Función getRecordValue(string $data) y Pasarle la Columna Necesaria, ip o mac o el nombre que se le de al tag.
-                            // $mac_tag[$i] = $record->getMac();
-                            $ip_tag[$i] = $record->getRecordValue("ip");
-                            $mac_tag[$i] = $record->getRecordValue("mac");
-                            $l_port[$i] = $record->getRecordValue("localPort");
-                            $r_port[$i] = $record->getRecordValue("remotePort");
-                            $protocol[$i] = $record->getRecordValue("protocol");
-                            $oui[$i] = $record->getRecordValue("oui");
-                            $i++;
+                            $l_port = $record->getRecordValue("localPort");
+                            $r_port = $record->getRecordValue("remotePort");
+                            $protocol = $record->getRecordValue("protocol");
+                            $oui = $record->getRecordValue("oui");
+                            $tag = ["ip" => $record->getRecordValue("ip"), "mac" => $record->getRecordValue("mac"), "l_port" => $record->getRecordValue("localPort"), "r_port" => $record->getRecordValue("remotePort"), "protocol" => $record->getRecordValue("protocol"), "oui" => $record->getRecordValue("oui")];
+                            $row = key_exists($record->getTime(), $records) ? $records[$record->getTime()] : [];
+                            $records[$record->getTime()] = array_merge($row, $tag, [$record->getField() => $record->getValue()]);
                         }
                     }
 
-                    if (count($time) > 0)
+                    if (count($records) > 0)
                     {
-                        for ($i = 0; $i < count($time); $i++)
-                        {
-                            echo "<pre>$time[$i] $measurement[$i] con IP: $ip_tag[$i] con Mac: $mac_tag[$i] Desde el Puerto: $l_port[$i] Conectado al Puerto: $r_port[$i] Mediante el Protcolo: $protocol[$i] con la OUI: $oui[$i] Es: $field[$i] = $value[$i]</pre><br>";
+                        $i = 0;
+                        foreach($records as $key) {
+                            echo "<pre>";
+                            foreach ($key as $value)
+                            {
+                                echo key($key) . ": " . $value . " - ";
+                                next($key);
+                            }
+                            echo "</pre>";
                         }
                     }
                     else
