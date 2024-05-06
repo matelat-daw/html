@@ -37,8 +37,8 @@ include "includes/nav_index.html";
                     <h3>Lista de datos en InfluxDB:</h3>
                     <br><br>
                     <?php
-                    // $query = "from(bucket: \"MACDB\") |> range(start: -6d) |> filter(fn: (r) => r._measurement == \"intruder\")"; // Consulta a InfluxDB.
-                    $query = "from(bucket: \"MACDB\") |> range(start: -6d) |> filter(fn: (r) => r._measurement == \"intruder\") |> sort(columns: [\"_time\"])";
+                    $query = "from(bucket: \"MACDB\") |> range(start: -6d) |> filter(fn: (r) => r._measurement == \"intruder\")"; // Consulta a InfluxDB.
+                    // $query = "from(bucket: \"MACDB\") |> range(start: -6d) |> filter(fn: (r) => r._measurement == \"intruder\") |> sort(columns: [\"_time\"])";
                     $tables = $client->createQueryApi()->query($query, $org); // Ejecuta la Consulta.
                     $records = [];
                     foreach ($tables as $table)
@@ -53,6 +53,10 @@ include "includes/nav_index.html";
 
                     if (count($records) > 0) // Si hay Datos.
                     {
+                        $time = array_column($records, 'time'); // Obtengo la KEY time del Array $records.
+
+                        array_multisort($time, SORT_DESC, $records); // Ordena el Array $records por la Columna time, en Orden Descendiente.
+
                         $i = 0;
                         $z = 0;
                         echo "<script>var array_key = [];
