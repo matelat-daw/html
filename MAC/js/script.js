@@ -25,7 +25,9 @@ function change(page, qtty) // Función que muestra los resultados de a 5 en la 
 {
     window.page = page; // Asigno la variable page, a la variable global window.page.
     window.qtty = qtty; // Asigno la variable qtty, a la variable global window.qtty.
-    var length = array_value.length / 8; // Necesito el tamaño del array de servicios(Los Servicios en la Base de Datos).
+    const tags = array_key.length - 1;
+    var length = array_value.length / (tags + 1); // Necesito el tamaño del array de servicios(Los Servicios en la Base de Datos).
+    console.log("Hay: " + tags + " Tags y: " + length + " Datos.");
     window.length = length; // Hago global la variable length.
 
     var html = "<table><tr><th>Dirección</th><th>MAC</th><th>Puerto Local</th><th>Puerto Remoto</th><th>Protocolo</th><th>OUI</th><th>Tamaño del Paquete</th><th>Marca</th><th>Ataques</th><th>Fecha</th></tr>";
@@ -33,8 +35,7 @@ function change(page, qtty) // Función que muestra los resultados de a 5 en la 
     {
         if (i < length) // Si i es menor que el tamaño del array.
         {
-            // html += "<tr><td>" + oui[i] + "</td><td>" + mac[i] + "</td><td>" + mark[i] + "</td><td>" + device[i] + "</td><td>" + port[i] + "</td><td>" + private[i] + "</td><td>" + type[i] + "</td><td>" + update[i] + "</td><td>" + attacks[i] + "</td><td>" + date[i] + "</td></tr>";
-            html += "<tr><td>" + array_value[i + (7 * i)] + "</td><td>" + array_value[i + 1 + (7 * i)] + "</td><td>" + array_value[i + 2 + (7 * i)] + "</td><td>" + array_value[i + 3 + (7 * i)] + "</td><td>" + array_value[i + 4 + (7 * i)] + "</td><td>" + array_value[i + 5 + (7 * i)] + "</td><td>" + array_value[i + 6 + (7 * i)] + "</td><td>" + array_value[i + 7 + (7 * i)] + "</td><td></td><td></td></tr>";
+            html += "<tr><td>" + array_value[i + (tags * i)] + "</td><td>" + array_value[i + 1 + (tags * i)] + "</td><td>" + array_value[i + 2 + (tags * i)] + "</td><td>" + array_value[i + 3 + (tags * i)] + "</td><td>" + array_value[i + 4 + (tags * i)] + "</td><td>" + array_value[i + 5 + (tags * i)] + "</td><td>" + array_value[i + 7 + (tags * i)] + "</td><td>" + array_value[i + 8 + (tags * i)] + "</td><td></td><td>" + array_value[i + 6 + (tags * i)] + "</td></tr>";
         }
     }
     html += "</table>";
@@ -91,7 +92,7 @@ function toast(warn, ttl, msg) // Función para mostrar el Diálogo con los mens
 
 function screenSize() // Función para dar el tamaño máximo de la pantalla a las vistas.
 {
-    let view4 = document.getElementById("view4");
+    let view3 = document.getElementById("view3");
     let height = window.innerHeight; // window.innerHeight es el tamaño vertical de la pantalla.
 
     if (view1.offsetHeight < height) // Si el tamaño vertical de la vista es menor que el tamaño vertical de la pantalla.

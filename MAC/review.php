@@ -16,48 +16,9 @@ if (isset($_POST["ip"])) // Recibe la IP desde el script index.php por POST.
     $protocol = $_POST["protocol"];
     $length = $_POST["packet"];
 
-    $oui = get_device($conn, $mac); // Llama a la Función getOui(), Pasándole la conexión con la base de datos, la MAC y la IP, el Dispositivo y los Puertos.
-    /*if ($oui != null)
-    {
-        search();
-    }
-    else
-    {
-        $sql = "SELECT oui FROM intruder WHERE mac='$mac' AND ip='$ip';"; // Sentencia SQL para Verificar si la MAC y la IP del dispositivo ya habían intentado un ataque.
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        if ($stmt->rowCount() > 0) // Si ya había un ataque de esa MAC con esa IP.
-        {
-            $oui = substr($mac, 0, -9);
-            $sql = "UPDATE intruder SET attacks = attacks + 1, date = NOW() WHERE oui='$oui';"; // Se actualiza la tabla de Ataques incrementando el campo attacks y Actualizando la fecha y hora.
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            echo "<script>toast(1, 'ALERTA:', 'Se Ha Detectado un Ataque de una MAC con una IP ya Registradas.<br>Tomen las Precauciones Necesarias.');</script>"; // Se muestra una alerta que se repite un ataque de un dispositvo que ya había atacado en el pasado.
-        }
-        else
-        {
-            echo "<script>toast(2, 'CUIDADO:', 'La MAC Detectada no es Valida, puede tratarse de una MAC Virtual o Randomizada, Android, IOS o Virtual.');</script>";
-            date_default_timezone_set('Europe/London');
-            $date = date('Y/m/d H:i:s A', time());
-            $sql = "INSERT INTO intruder VALUES(:oui, :mac, :ip, :mark, :device, :open_ports, :private, :type, :up_date, :date, :attacks);";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute([':oui' => $ma_l, ':mac' => $mac, ':ip' => $ip, ':mark' => "Android, IOS, Virtual", ':device' => $device, ':open_ports' => $port, ':private' => 1, ':type' => "MA_L", ':up_date' => "1970-01-01", ':date' => $date, ':attacks' => 1]);
-        }
-    }*/
+    $oui = get_device($conn, $mac); // Llama a la Función get_device($conn, $mac), Pasándole la conexión con la base de datos y la MAC.
 
-    // exec('nmap ' . $ip . ' > data.txt'); // Ejecuta la aplicación nmap pasándole la IP y redirecciona la salida al fichero data.txt.
-    // $mac = loadFile($ip); // Asgina a $mac el Resultado que Devuelve la Llamada a la Función loadFile Pasándole la IP.
-    // if ($mac != null)
-    // {
-    //     $mac_result = explode(";", $mac); // Se Explota la Cadena $mac en la Variable Array $mac_result y en la Posición 0 se Obtiene la MAC, en la 1 el nombre del dispositivo y en la 2 los puertos abiertos si lo hay.
-    // }
-    // else // Si $mac es NULL, caso casi improbable.
-    // {
-    //     echo "<script>toast(2, 'ERROR:', 'No se Han Podido Obtener los Datos Verifica que el Disco no esté Lleno y si Tienes Permisos Para Escribir en la Carpeta del Proyecto.');</script>";
-    // }
-
-    // $oui = substr($mac_result[0], 0, -9);
-    $sql = "SELECT vendorName FROM mac WHERE macPrefix='$oui'";
+    $sql = "SELECT vendorName FROM mac WHERE macPrefix='$oui'"; // Obtenemos la Marca del Dispositivo de la Base de Datos MariaDB.
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     if ($stmt->rowCount() > 0)
@@ -79,32 +40,7 @@ if (isset($_POST["ip"])) // Recibe la IP desde el script index.php por POST.
     $client->close();
 
     echo "<script>toast(0, 'Datos Agregados', 'Se Han Agregado Datos a InfluxDB.');</script>";
-
-    // echo '<fieldset>
-    //         <legend>Datos de la MAC Sospechosa y su IP</legend>
-    //         <form action="review.php" method="post">
-    //         <label><input type="text" name="mac" value="' . $mac . '" required> MAC Address</label>
-    //         <br><br>
-    //         <label><input type="text" name="device" value="' . $mac_result[1] . '" required> Device Name</label>
-    //         <br><br>
-    //         <label><input type="text" name="port" value="' . $mac_result[2] . '"> Open Ports</label>
-    //         <br><br>
-    //         <label><input type="text" name="ip2" value="' . $ip . '" required> IP Address</label>
-    //         <br><br>
-    //         <input type="submit" value="Almacena la MAC y la IP" class="btn btn-primary-lg">
-    //         </form>
-    //     </fieldset>'; // Muestra el Formulario HTML para enviar los datos a la Base de Datos: la Mac, en Nombre del Dispositivo, los Puertos Abiertos y la IP.
 }
-
-// if (isset($_POST["mac"])) // Entra Aquí Después de Hacer Click en el Botón Almacena la MAC y la IP de Este Mismo Script.
-// {
-//     $mac = $_POST["mac"]; // Asigna a $mac la MAC recibida por POST.
-//     $ip = $_POST["ip2"]; // Asigna a $ip la IP recibida por POST.
-//     $device = $_POST["device"]; // Asigna a $device en nombre de Dispositivo recibido por POST.
-//     $port = $_POST["port"]; // Asigna a $port los Puertos recibidos por POST.
-
-//     getOui($conn, $mac, $ip, $device, $port); // Llama a la Función getOui(), Pasándole la conexión con la base de datos, la MAC y la IP, el Dispositivo y los Puertos.
-// }
 
 function loadFile($ip) // Carga el Fichero data.txt en Memoria y Obtiene los Datos.
 {
