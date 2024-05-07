@@ -10,9 +10,14 @@
     $today = "";
     $date = $check->Date;
     $qtty = $check->Nmsgs;
+    echo '<script>console.log("Hay: " + "' . $qtty . ' Mensajes.");</script>';
     $temp = explode(" ", $date);
     for ($i = 0; $i < 4; $i++)
     {
+        if (strlen($temp[$i]) == 1)
+        {
+            $temp[$i] = "0" . $temp[$i];
+        }
         $today .= $temp[$i];
     }
     echo "<h3>$today</h3>
@@ -40,6 +45,10 @@
         $mail_temp = explode(" ", $mail_date);
         for ($i = 0; $i < 4; $i++)
         {
+            if (strlen($mail_temp[$i]) == 1)
+            {
+                $mail_temp[$i] = "0" . $mail_temp[$i];
+            }
             $mail_today .= $mail_temp[$i];
         }
         if ($today == $mail_today)
@@ -51,9 +60,7 @@
             Header cc : " . $header->cc . "<BR>
             Header ReplyTo : " . $header->ReplyTo . "<BR>"); */
 
-            /* print("<PRE>"
-            imap_body($mailbox, $qtty))
-            "</PRE><HR>"); */
+            print("<PRE>" . imap_body($mailbox, $qtty) . "</PRE><HR>");
         }
         $qtty--;
     }
