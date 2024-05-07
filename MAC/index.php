@@ -39,7 +39,7 @@ include "includes/nav_index.html";
                     <h3>Lista de datos en InfluxDB:</h3>
                     <br><br>
                     <?php
-                    $query = "from(bucket: \"MACDB\") |> range(start: -6d) |> filter(fn: (r) => r._measurement == \"intruder\")"; // Consulta a InfluxDB.
+                    $query = "from(bucket: \"$bucket\") |> range(start: -6d) |> filter(fn: (r) => r._measurement == \"intruder\")"; // Consulta a InfluxDB.
                     $tables = $client->createQueryApi()->query($query, $org); // Ejecuta la Consulta Asignado el Resutlado a la Variable $tables.
                     $records = []; // $records Contendrá todos los Resultados de la Tabla intruder de la Base de Datos MACDB.
                     foreach ($tables as $table) // Obtiene cada Tabla de las Tablas de la Variable $tables(Solo Obtiene la Tabla intruder).
