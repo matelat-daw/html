@@ -25,17 +25,16 @@ function change(page, qtty) // Función que muestra los resultados de a 5 en la 
 {
     window.page = page; // Asigno la variable page, a la variable global window.page.
     window.qtty = qtty; // Asigno la variable qtty, a la variable global window.qtty.
-    const tags = array_key.length - 1;
-    var length = array_value.length / (tags + 1); // Necesito el tamaño del array de servicios(Los Servicios en la Base de Datos).
-    console.log("Hay: " + tags + " Tags y: " + length + " Datos.");
+    const tags = array_key.length - 1; // Cantidad de Datos en Cada Tupla de Valores.
+    var length = array_value.length / (tags + 1); // Obtengo en length el Tamaño de Cada Tupla en el Array de Valores.
     window.length = length; // Hago global la variable length.
 
-    var html = "<table><tr><th>Dirección</th><th>MAC</th><th>Puerto Local</th><th>Puerto Remoto</th><th>Protocolo</th><th>OUI</th><th>Tamaño del Paquete</th><th>Marca</th><th>Ataques</th><th>Fecha</th></tr>";
+    var html = "<table><tr class='text-center'><th>IP</th><th>MAC</th><th>Host</th><th>Puerto Local</th><th>Puerto Remoto</th><th>Protocolo</th><th>OUI</th><th>Tamaño del Paquete</th><th>Marca</th><th>Fecha</th></tr>";
     for (i = (page - 1) * qtty; i < page * qtty; i++) // Aquí hago el bucle desde la página donde esté, a la cantidad de resultados a mostrar.
     {
         if (i < length) // Si i es menor que el tamaño del array.
         {
-            html += "<tr><td>" + array_value[i + (tags * i)] + "</td><td>" + array_value[i + 1 + (tags * i)] + "</td><td>" + array_value[i + 2 + (tags * i)] + "</td><td>" + array_value[i + 3 + (tags * i)] + "</td><td>" + array_value[i + 4 + (tags * i)] + "</td><td>" + array_value[i + 5 + (tags * i)] + "</td><td>" + array_value[i + 7 + (tags * i)] + "</td><td>" + array_value[i + 8 + (tags * i)] + "</td><td></td><td>" + array_value[i + 6 + (tags * i)] + "</td></tr>";
+            html += "<tr><td>" + array_value[i + (tags * i)] + "</td><td>" + array_value[i + 1 + (tags * i)] + "</td><td>" + array_value[i + 2 + (tags * i)] + "</td><td>" + array_value[i + 3 + (tags * i)] + "</td><td>" + array_value[i + 4 + (tags * i)] + "</td><td>" + array_value[i + 5 + (tags * i)] + "</td><td>" + array_value[i + 6 + (tags * i)] + "</td><td>" + array_value[i + 8 + (tags * i)] + "</td><td>" + array_value[i + 9 + (tags * i)] + "</td><td>" + array_value[i + 7 + (tags * i)] + "</td></tr>";
         }
     }
     html += "</table>";
@@ -63,9 +62,28 @@ function change(page, qtty) // Función que muestra los resultados de a 5 en la 
     }
 }
 
-function wait() // Se muestra una alerta para indicar que verificar la IP demora unos 10 segundos.
+/* function wait() // Se muestra una alerta para indicar que verificar la IP demora unos 10 segundos.
 {
     alert("Verificar la IP demora unos segundos.\nHaz Click en Aceptar y Se Cargará una Nueva Página Después de Aproximadamente 10 Segundos.");
+} */
+
+function addColon()
+{
+    mac.addEventListener("keydown", (e) => {
+        if (e.keyCode != 8)
+        {
+            switch(mac.value.length)
+            {
+                case 2:
+                case 5:
+                case 8:
+                case 11:
+                case 14:
+                    mac.value += ":";
+                    break;
+            }
+        }
+    });
 }
 
 function toast(warn, ttl, msg) // Función para mostrar el Diálogo con los mensajes de alerta, recibe, Código, Título y Mensaje.

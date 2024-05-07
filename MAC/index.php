@@ -14,21 +14,23 @@ include "includes/nav_index.html";
                     <br><br><br><br>
                     <h1>Verificador de MACS</h1>
                     <fieldset>
-                        <legend>Por Favor Ingresa la IP</legend>
+                        <legend>Por Favor Ingresa los Datos</legend>
                         <form action="review.php" method="post">
-                        <label><input type="text" name="ip" required> IP Address</label>
+                        <label><input id="ip" type="text" name="ip" maxlength="15" required> Dirección IP</label>
                         <br><br>
-                        <label><input type="text" name="mac" required> MAC Address</label>
+                        <label><input id="mac" type="text" name="mac" oninput="addColon()" placeholder="No Escribas los :" maxlength="17" required> Dirección MAC</label>
                         <br><br>
-                        <label><input type="text" name="local_port" required> Puerto Local</label>
+                        <label><input type="text" name="host" required> Nombre del Dispositvo</label>
                         <br><br>
-                        <label><input type="text" name="remote_port" required> Puerto Remoto</label>
+                        <label><input type="text" name="local_port" min="1" max="65535" required> Puerto Local</label>
+                        <br><br>
+                        <label><input type="text" name="remote_port" min="1" max="1024" required> Puerto Remoto</label>
                         <br><br>
                         <label><input type="text" name="protocol" required> Protocolo de Conexión</label>
                         <br><br>
                         <label><input type="number" name="packet" required> Tamaño del Paquete</label>
                         <br><br>
-                        <input type="submit" onclick="wait();" value="Verifica" class="btn btn-primary">
+                        <input type="submit" value="Verifica" class="btn btn-primary btn-lg">
                         </form>
                     </fieldset>
                 </div>
@@ -38,16 +40,15 @@ include "includes/nav_index.html";
                     <br><br>
                     <?php
                     $query = "from(bucket: \"MACDB\") |> range(start: -6d) |> filter(fn: (r) => r._measurement == \"intruder\")"; // Consulta a InfluxDB.
-                    // $query = "from(bucket: \"MACDB\") |> range(start: -6d) |> filter(fn: (r) => r._measurement == \"intruder\") |> sort(columns: [\"_time\"])";
-                    $tables = $client->createQueryApi()->query($query, $org); // Ejecuta la Consulta.
-                    $records = [];
-                    foreach ($tables as $table)
+                    $tables = $client->createQueryApi()->query($query, $org); // Ejecuta la Consulta Asignado el Resutlado a la Variable $tables.
+                    $records = []; // $records Contendrá todos los Resultados de la Tabla intruder de la Base de Datos MACDB.
+                    foreach ($tables as $table) // Obtiene cada Tabla de las Tablas de la Variable $tables(Solo Obtiene la Tabla intruder).
                     {
-                        foreach ($table->records as $record)
+                        foreach ($table->records as $record) // De la Tabla intruder Obtiene cada Campo Almacenado en la Varaible $record.
                         {
-                            $tag = ["ip" => $record->getRecordValue("ip"), "mac" => $record->getRecordValue("mac"), "l_port" => $record->getRecordValue("localPort"), "r_port" => $record->getRecordValue("remotePort"), "protocol" => $record->getRecordValue("protocol"), "oui" => $record->getRecordValue("oui"), "time" => $record->getTime()]; // En la Varible de tipo array $tag, pusimos todos los tags y sus valores.
+                            $tag = ["ip" => $record->getRecordValue("ip"), "mac" => $record->getRecordValue("mac"), "host" => $record->getRecordValue("host"), "l_port" => $record->getRecordValue("localPort"), "r_port" => $record->getRecordValue("remotePort"), "protocol" => $record->getRecordValue("protocol"), "oui" => $record->getRecordValue("oui"), "time" => $record->getTime()]; // En la Varible de tipo array $tag, pusimos todos los tags y sus valores.
                             $row = key_exists($record->getTime(), $records) ? $records[$record->getTime()] : []; // Este operador ternario asigna a $row los datos en InfluxDB.
-                            $records[$record->getTime()] = array_merge($row, $tag, [$record->getField() => $record->getValue()]); // Hacemos un array_merge con los datos de toda la tupla.
+                            $records[$record->getTime()] = array_merge($row, $tag, [$record->getField() => $record->getValue()]); // Hacemos un array_merge con los datos de toda la Tupla y los Tags.
                         }
                     }
 
@@ -57,30 +58,28 @@ include "includes/nav_index.html";
 
                         array_multisort($time, SORT_DESC, $records); // Ordena el Array $records por la Columna time, en Orden Descendiente.
 
-                        $i = 0;
-                        $z = 0;
+                        $i = 0; // Índice de Todos los Datos de Todas las Tuplas.
+                        $z = 0; // Se usa para almacenar los Tags Solo una Vez.
                         echo "<script>var array_key = [];
-                                    var array_value = [];</script>";
+                                    var array_value = [];</script>"; // Creo las Variables de Tipo Array de Javascript.
                         foreach($records as $key) // Bucle para Obtener las Keys.
                         {
-                            $z++;
-                            echo "<h5>"; // Formato del texto.
-                            foreach ($key as $value) // Bucle para Obtener los Valores.
+                            $z++; // Incremento $z.
+                            foreach ($key as $value) // Bucle para Obtener los Valores de cada Clave.
                             {
-                                if ($z == 1)
+                                if ($z == 1) // Si $z es 1.
                                 {
-                                    echo "<script>array_key[" . $i . "] = '" . key($key) . "';</script>"; // Las Tags.
+                                    echo "<script>array_key[" . $i . "] = '" . key($key) . "';</script>"; // Almaceno Las Tags en el Array de Tags de Javascript.
                                 }
-                                echo "<script>array_value[" . $i . "] = '" . $value . "';</script>"; // Los Valores.
+                                echo "<script>array_value[" . $i . "] = '" . $value . "';</script>"; // Almaceno Los Valores en el Array de Valores de Javascript.
                                 next($key); // Siguiente Clave.
                                 $i++; // Siguiente Índice.
                             }
-                            echo "</h5>";
                         }
                     }
-                    else
+                    else // Si No Hay Datos.
                     {
-                        echo "<script>toast(0, 'Sin Datos Aun', 'No Hay Datos de la Última Hora.');</script>";
+                        echo "<script>toast(0, 'Sin Datos Aun', 'No Hay Datos de la Última Hora.');</script>"; // Mensaje No Hay Datos.
                     }
                     /* for ($j = 0; $j < $i / 9; $j++)
                     {
