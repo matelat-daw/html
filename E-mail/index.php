@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
     //check for new messages.
 
@@ -52,16 +51,13 @@
             Header cc : " . $header->cc . "<BR>
             Header ReplyTo : " . $header->ReplyTo . "<BR>"); */
 
-            /* print("<PRE>"
-            imap_body($mailbox, $qtty))
-            "</PRE><HR>"); */
+            print("<PRE>" . imap_body($mailbox, $qtty) . "</PRE><HR>");
         }
         $qtty--;
     }
 
     imap_close($mailbox);
 ?>
-=======
 <?php
 
 ?>
@@ -76,4 +72,3 @@
     
 </body>
 </html>
->>>>>>> cb49e361 (Update 02-05-2024 08:14)
