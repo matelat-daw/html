@@ -1,5 +1,14 @@
 <?php
     //check for new messages.
+    echo '
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-mail Monitor</title>
+</head>
+<body>';
 
     echo "<h1>Verifica los Mensajes IMAP de Gmail</h1>";
 
@@ -66,4 +75,6 @@
     }
 
     imap_close($mailbox);
-?>
+?>  
+</body>
+</html>

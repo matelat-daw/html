@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/script.js"></script>
+</head>
+<body>
+    <label><input id="size" type="number" name="size" required> Tamaño de la Tabla Horizontal/Vertical</label>
+    <br><br>
+    <input type="submit" value="Dibuja" onclick="table(document.getElementById('size').value)">
+    <div id="container"></div>
+    <div id="control">
+        <pre>      <button> ^ </button>
+
+<button>&lt;</button>   <button onclick="show()">O</button>   <button>&gt;</button>
+
+      <button> v </button>
+    </div>
+    <div id="option">
+        <label><input id="color" type="color" name="picker" onchange="myColor()"></label>
+    </div>
+</body>
+</html>
