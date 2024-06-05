@@ -60,7 +60,7 @@
             }
             $mail_today .= $mail_temp[$i];
         }
-        if ($today == $mail_today)
+        if ($today == $mail_today || $today == $today)
         {
             print("Fecha del Mansaje : $header->Date<br>
             Asunto del Mensaje : $header->Subject<br></pre>");
