@@ -1,4 +1,6 @@
 <?php
+include "includes/conn.php";
+
 if (isset($_POST["username"]))
 {
     $name = $_POST["username"];
@@ -6,7 +8,7 @@ if (isset($_POST["username"]))
 
     $sql = "INSERT INTO user VALUES(:id, :name, :email);";
     $stmt = $conn->prepare($sql);
-    $stmt-execute([':id' => NULL, ':name' => $name, ':email' => $email]);
+    $stmt->execute([':id' => NULL, ':name' => $name, ':email' => $email]);
     if ($stmt->rowCount() > 0)
     {
         echo '<script>alert("Registrado Mostroso.");</script>';

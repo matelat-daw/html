@@ -14,7 +14,7 @@
         <form action="logon.php" method="post">
             <label><input type="text" name="username"> Nombre</label>
             <br><br>
-            <label><input type="email" name="email"> Nombre</label>
+            <label><input type="email" name="email"> E-mail</label>
             <br><br>
             <input type="submit" value="Me Registro!">
         </form>
