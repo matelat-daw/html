@@ -34,14 +34,14 @@
     Fecha de los Mensajes Más Recientes : $check->Date
     <br></pre>";
     /* print("Connection type : " . $check->Driver);
-    print("<BR>");
+    print("<br>");
     print("Name of the mailbox : " . $check->Mailbox);
-    print("<BR>");
+    print("<br>");
     print("Number of messages : " . $check->Nmsgs);
-    print("<BR>");
+    print("<br>");
     print("Number of recent messages : " . $check->Recent);
-    print("<BR>");
-    print("</PRE>"); */
+    print("<br>");
+    print("</pre>"); */
 
     // show headers for messages.
 
@@ -64,12 +64,12 @@
         {
             print("Fecha del Mansaje : $header->Date<br>
             Asunto del Mensaje : $header->Subject<br></pre>");
-            /* print("Header To : " . $header->to) . "<BR>
-            Header From : " . $header->From . "<BR>
-            Header cc : " . $header->cc . "<BR>
-            Header ReplyTo : " . $header->ReplyTo . "<BR>"); */
+            /* print("Header To : " . $header->to) . "<br>
+            Header From : " . $header->From . "<br>
+            Header cc : " . $header->cc . "<br>
+            Header ReplyTo : " . $header->ReplyTo . "<br>"); */
 
-            print("<PRE>" . imap_body($mailbox, $qtty) . "</PRE><HR>");
+            print("<pre>" . imap_body($mailbox, $qtty) . "</pre><hr>");
         }
         $qtty--;
     }
